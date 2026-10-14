@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="制造计划助手：可交互的供应链计划前端演示，使用模拟数据。">
+<title>制造计划助手 · AI 供应链计划系统</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#182740;--line:#2b3a52;--text:#e8eef8;--muted:#9aaac1;--cyan:#4fd1e8;--blue:#6ba8ff;--green:#49d7a2;--yellow:#ffca6a;--red:#ff7f91;--purple:#b9a0ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top left,#132744 0%,var(--bg) 48%);color:var(--text);font:14px/1.5 Inter,"Segoe UI","Microsoft YaHei",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:#1b2b44;color:var(--text);transition:.15s}button:hover{border-color:var(--cyan);transform:translateY(-1px)}button.primary{background:linear-gradient(110deg,#4fd1e8,#7daaff);color:#071421;border:0;font-weight:700}button.ghost{background:transparent}button.small{padding:5px 8px;font-size:12px}
+.app{max-width:1440px;margin:auto;min-height:100vh;display:grid;grid-template-columns:230px minmax(0,1fr)}
+aside{border-right:1px solid #26344a;background:rgba(10,18,32,.78);padding:22px 14px;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 9px}.logo{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#081321;font-size:20px;font-weight:900}.brand strong{display:block;font-size:14px}.brand small{color:var(--muted);font-size:11px}
+.navlabel{font-size:10px;color:#70829c;letter-spacing:1.6px;padding:0 12px;margin-bottom:7px}.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border-color:transparent;background:transparent;color:#aebbd0}.nav button.active,.nav button:hover{background:#1a2c45;border-color:#29415d;color:#fff}.nav .ico{width:20px;text-align:center;font-size:16px}.aside-note{margin-top:auto;border:1px solid #34445d;background:#111e31;border-radius:12px;padding:12px;color:var(--muted);font-size:11px}.aside-note b{display:block;color:var(--yellow);margin-bottom:5px}
+main{min-width:0;padding:24px clamp(14px,3vw,38px) 50px}.topbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:24px}.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:1.4px;text-transform:uppercase}.title{font-size:26px;letter-spacing:-.6px;margin:4px 0 3px}.subtitle{color:var(--muted);font-size:12px}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.demo-badge{border:1px solid #8a6c2d;color:#ffd98a;background:#3a2d16;padding:7px 10px;border-radius:99px;font-size:11px;white-space:nowrap}.avatar{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#263d60;color:#bcefff;font-weight:700}
+.banner{border:1px solid #34516a;background:linear-gradient(100deg,rgba(34,88,116,.3),rgba(34,57,92,.2));padding:12px 15px;border-radius:12px;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start;color:#b9d9ef;font-size:12px}.banner strong{color:#e6f7ff}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:18px}.card,.panel{background:linear-gradient(145deg,rgba(20,32,52,.96),rgba(15,26,44,.96));border:1px solid var(--line);border-radius:14px}.kpi{padding:16px}.kpi-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}.kpi-icon{width:30px;height:30px;border-radius:9px;background:#213752;display:grid;place-items:center;color:var(--cyan)}.kpi-value{font-size:27px;font-weight:750;letter-spacing:-.7px;margin:9px 0 4px}.kpi-foot{font-size:11px;color:var(--muted)}.up{color:var(--green)}.warn{color:var(--yellow)}.down{color:var(--red)}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,1fr);gap:16px;margin-bottom:16px}.panel{padding:17px;min-width:0;margin-bottom:16px}.content-grid .panel{margin:0}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}.panel h2{font-size:14px;margin:0 0 4px}.panel p{font-size:11px;color:var(--muted);margin:0}.chart{height:210px;display:flex;align-items:stretch;gap:13px;padding:8px 2px 0}.chart-col{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:7px}.bars{height:170px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:4px;border-bottom:1px solid #35465d;background:repeating-linear-gradient(to top,transparent 0,transparent 41px,rgba(128,154,190,.08) 42px,transparent 43px)}.bar{width:min(24px,36%);border-radius:5px 5px 0 0;min-height:4px;position:relative}.bar.blue{background:linear-gradient(0deg,#3473cb,#75aaff)}.bar.cyan{background:linear-gradient(0deg,#148eac,#5fe0ed)}.bar.purple{background:linear-gradient(0deg,#7256c7,#b9a0ff)}.chart-label{font-size:10px;color:var(--muted)}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--muted)}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.progress-list{display:grid;gap:16px}.progress-row{display:grid;grid-template-columns:90px minmax(0,1fr) 42px;gap:9px;align-items:center;font-size:11px}.progress-row span:first-child{color:#bac7da}.track{height:7px;border-radius:99px;background:#25364f;overflow:hidden}.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#38b6d4,#6b9dff)}.fill.yellow{background:linear-gradient(90deg,#e6a83b,#ffda83)}.fill.red{background:linear-gradient(90deg,#d95876,#ff9c9c)}
+.table-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.field{background:#0d192b;border:1px solid #30415a;border-radius:8px;color:var(--text);padding:8px 10px;min-width:0}.field::placeholder{color:#71829c}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #27374e}th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#8194ae;font-weight:650}tbody tr:hover{background:rgba(75,134,191,.07)}.status{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:4px 8px;font-size:10px}.status:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}.status.good{background:#123b35;color:#65e4b4}.status.watch{background:#44351c;color:#ffd17c}.status.bad{background:#482433;color:#ff9bad}.status.info{background:#1d3553;color:#8fc5ff}
+.risk-list{display:grid;gap:10px}.risk{border:1px solid #3b3540;background:#211f2b;border-radius:10px;padding:11px 12px;display:grid;grid-template-columns:30px 1fr;gap:9px}.risk-icon{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;background:#4a3520;color:#ffd27b}.risk.red{border-color:#5b3444;background:#271b28}.risk.red .risk-icon{background:#512b3b;color:#ff9bad}.risk strong{font-size:12px;display:block;margin-bottom:3px}.risk p{font-size:11px;color:#aab6ca;line-height:1.6}.risk small{display:block;color:#8190a7;margin-top:5px;font-size:10px}
+.view{display:none}.view.active{display:block}.page-actions{display:flex;gap:8px;flex-wrap:wrap}.empty{color:var(--muted);font-size:12px;padding:22px;text-align:center}.footer{text-align:center;color:#63748c;font-size:10px;margin-top:24px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(1,7,15,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:18px;z-index:10}.modal-backdrop.show{display:flex}.modal{width:min(520px,100%);background:#132137;border:1px solid #3b506d;border-radius:16px;padding:20px;box-shadow:0 24px 90px #0008}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal h2{font-size:16px;margin:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-field label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.form-field input,.form-field select{width:100%}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.toast{position:fixed;right:20px;bottom:20px;background:#17372f;border:1px solid #347e68;color:#c6ffea;padding:12px 16px;border-radius:10px;display:none;z-index:20;box-shadow:0 10px 35px #0005}.toast.show{display:block}
+@media(max-width:1000px){.app{grid-template-columns:75px minmax(0,1fr)}aside{padding:20px 8px}.brand{justify-content:center;padding:0}.brand-copy,.navlabel,.nav-text,.aside-note{display:none}.nav button{justify-content:center;padding:12px 5px}.nav .ico{font-size:19px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.app{display:block}aside{position:sticky;top:0;z-index:5;flex-direction:row;align-items:center;padding:8px 12px;border-right:0;border-bottom:1px solid var(--line);overflow:auto}.brand{flex-shrink:0}.brand-copy{display:block}.nav{display:flex;gap:3px}.nav button{padding:9px}.nav .ico{font-size:16px}.topbar{align-items:flex-start;flex-direction:column}.title{font-size:22px}.kpis{gap:8px}.kpi{padding:12px}.kpi-value{font-size:23px}.form-grid{grid-template-columns:1fr}.app main{padding-top:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand"><div class="logo">M</div><div class="brand-copy"><strong>制造计划助手</strong><small>SUPPLY CHAIN AI</small></div></div>
+  <div><div class="navlabel">工作空间</div><nav class="nav" aria-label="主导航">
+    <button class="active" data-view="dashboard"><span class="ico">▦</span><span class="nav-text">总览仪表盘</span></button>
+    <button data-view="orders"><span class="ico">▤</span><span class="nav-text">需求与订单</span></button>
+    <button data-view="production"><span class="ico">◫</span><span class="nav-text">生产计划 MPS</span></button>
+    <button data-view="mrp"><span class="ico">⌘</span><span class="nav-text">物料需求 MRP</span></button>
+    <button data-view="inventory"><span class="ico">▧</span><span class="nav-text">库存管理</span></button>
+    <button data-view="procurement"><span class="ico">⇄</span><span class="nav-text">采购建议</span></button>
+    <button data-view="risks"><span class="ico">△</span><span class="nav-text">风险预警</span></button>
+  </nav></div>
+  <div class="aside-note"><b>● 演示环境已就绪</b>当前使用本地模拟数据。修改仅影响本次浏览器会话，不会连接真实数据库。</div>
+</aside>
+<main>
+<header class="topbar"><div><div class="eyebrow">SUPPLY CHAIN PLANNING / DEMO</div><h1 class="title" id="pageTitle">总览仪表盘</h1><div class="subtitle" id="pageSubtitle">把需求、产能、物料与采购放进同一个计划闭环。</div></div><div class="top-actions"><span class="demo-badge">◉ MOCK DATA · 模拟数据</span><button class="ghost" id="resetBtn">↺ 重置演示数据</button><div class="avatar" title="演示用户">DE</div></div></header>
+<div class="banner"><span>ⓘ</span><div><strong>交互式前端演示</strong>　所有数字均为示例数据；新增订单、筛选、运行计划和生成采购建议会在当前页面内模拟执行，不调用线上后端。算法结果不代表后端真实计算结果。</div></div>
+
+<section class="view active" id="view-dashboard">
+  <div class="kpis" id="kpis"></div>
+  <div class="content-grid">
+    <section class="panel"><div class="panel-head"><div><h2>周度需求与产能</h2><p>计划需求量 vs. 可用产能（单位：件）</p></div><span class="status info">未来 6 周</span></div><div class="chart" id="mainChart"></div><div class="legend"><span><i class="dot" style="background:#6ba8ff"></i>计划需求</span><span><i class="dot" style="background:#4fd1e8"></i>周产能</span></div></section>
+    <section class="panel"><div class="panel-head"><div><h2>计划执行概览</h2><p>各产品需求满足率（模拟）</p></div></div><div class="progress-list" id="serviceLevels"></div></section>
+  </div>
+  <div class="content-grid">
+    <section class="panel"><div class="panel-head"><div><h2>近期需求订单</h2><p>订单优先级与交付状态</p></div><button class="small" data-goto="orders">查看全部 →</button></div><div class="table-wrap" id="recentOrders"></div></section>
+    <section class="panel"><div class="panel-head"><div><h2>重点风险</h2><p>需要计划员关注的事项</p></div><button class="small" data-goto="risks">风险详情 →</button></div><div class="risk-list" id="topRisks"></div></section>
+  </div>
+</section>
+
+<section class="view" id="view-orders">
+  <div class="panel"><div class="panel-head"><div><h2>需求与订单管理</h2><p>按客户需求维护计划输入。演示数据仅保存在当前页面状态。</p></div><button class="primary" id="addOrderBtn">＋ 新增订单</button></div>
+  <div class="table-tools"><input class="field" id="orderSearch" placeholder="搜索订单号 / 产品 / 客户"><select class="field" id="orderFilter"><option value="all">全部状态</option><option>待排产</option><option>计划中</option><option>已确认</option></select></div><div class="table-wrap" id="ordersTable"></div></div>
+</section>
+
+<section class="view" id="view-production">
+  <div class="panel"><div class="panel-head"><div><h2>主生产计划（MPS）</h2><p>根据需求、产能与产品优先级生成示例排产结果。</p></div><div class="page-actions"><button id="capacityBtn">调整产能</button><button class="primary" id="runPlanBtn">▶ 模拟运行计划</button></div></div>
+  <div class="kpis" id="productionKpis"></div><div class="table-wrap" id="productionTable"></div><div class="note" style="margin-top:12px;color:var(--muted);font-size:11px">提示：此页面展示的是前端演示逻辑，不是后端 PuLP/MILP 求解器的实际输出。</div></div>
+</section>
+
+<section class="view" id="view-mrp">
+  <div class="panel"><div class="panel-head"><div><h2>物料需求计划（MRP）</h2><p>示例 BOM 展开、库存扣减与净需求计算。</p></div><button class="primary" id="runMrpBtn">计算模拟净需求</button></div><div class="kpis" id="mrpKpis"></div><div class="table-wrap" id="mrpTable"></div></div>
+</section>
+
+<section class="view" id="view-inventory">
+  <div class="panel"><div class="panel-head"><div><h2>库存管理</h2><p>可以调整示例库存并观察净需求变化。</p></div><button id="addStockBtn">＋ 调整库存</button></div><div class="table-tools"><input class="field" id="stockSearch" placeholder="搜索物料编码或名称"></div><div class="table-wrap" id="inventoryTable"></div></div>
+</section>
+
+<section class="view" id="view-procurement">
+  <div class="panel"><div class="panel-head"><div><h2>采购建议</h2><p>根据模拟净需求生成建议单，支持状态切换。</p></div><button class="primary" id="generatePoBtn">＋ 生成采购建议</button></div><div class="kpis" id="poKpis"></div><div class="table-wrap" id="poTable"></div></div>
+</section>
+
+<section class="view" id="view-risks">
+  <div class="panel"><div class="panel-head"><div><h2>供应链风险预警</h2><p>交期、库存与产能风险的示例规则展示。</p></div><button id="refreshRiskBtn">↻ 刷新风险</button></div><div class="kpis" id="riskKpis"></div><div class="risk-list" id="riskList"></div></div>
+</section>
+<div class="footer">制造计划助手 · AI 供应链计划系统 · 求职展示版 · 使用模拟数据，不连接真实后端</div>
+</main>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><div class="modal-head"><h2 id="modalTitle">新增订单</h2><button class="small" id="closeModal" aria-label="关闭">✕</button></div><form id="demoForm"><div class="form-grid" id="modalFields"></div><div class="modal-actions"><button type="button" id="cancelModal">取消</button><button type="submit" class="primary">确认保存</button></div></form></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const initial = {
+ capacity: 2700,
+ orders: [
+  {id:"SO-26041",customer:"华东制造",product:"智能控制器 A",code:"P-A",week:1,qty:820,status:"已确认",priority:"高"},
+  {id:"SO-26042",customer:"远景工业",product:"驱动模块 B",code:"P-B",week:1,qty:610,status:"计划中",priority:"高"},
+  {id:"SO-26043",customer:"科创设备",product:"传感组件 C",code:"P-C",week:2,qty:760,status:"待排产",priority:"中"},
+  {id:"SO-26044",customer:"华东制造",product:"智能控制器 A",code:"P-A",week:3,qty:920,status:"待排产",priority:"高"},
+  {id:"SO-26045",customer:"新锐科技",product:"驱动模块 B",code:"P-B",week:4,qty:680,status:"计划中",priority:"中"},
+  {id:"SO-26046",customer:"远景工业",product:"传感组件 C",code:"P-C",week:5,qty:540,status:"待排产",priority:"低"},
+  {id:"SO-26047",customer:"科创设备",product:"智能控制器 A",code:"P-A",week:6,qty:730,status:"待排产",priority:"中"}
+ ],
+ products:[
+  {code:"P-A",name:"智能控制器 A",cost:86,rate:94,color:"blue"},
+  {code:"P-B",name:"驱动模块 B",cost:124,rate:88,color:"cyan"},
+  {code:"P-C",name:"传感组件 C",cost:63,rate:97,color:"purple"}
+ ],
+ materials:[
+  {code:"M-101",name:"控制芯片",onHand:680,safety:300,lead:3,cost:18,supplier:"芯源科技"},
+  {code:"M-102",name:"驱动板",onHand:430,safety:220,lead:2,cost:36,supplier:"华信电子"},
+  {code:"M-103",name:"传感器",onHand:290,safety:180,lead:4,cost:22,supplier:"精测元件"},
+  {code:"M-104",name:"结构件",onHand:1250,safety:400,lead:1,cost:8,supplier:"宏达精工"}
+ ],
+ bom:{"P-A":{"M-101":1,"M-104":1},"P-B":{"M-102":1,"M-104":1},"P-C":{"M-103":1,"M-104":1}},
+ purchaseOrders:[],
+ risks:[
+  {level:"bad",icon:"!",title:"控制芯片库存接近安全线",desc:"当前可用库存 680 件，按示例需求预计第 3 周需要补货。",tag:"物料 M-101 · 高优先级"},
+  {level:"warn",icon:"◷",title:"传感器采购提前期较长",desc:"供应商交期约 4 周，建议提前确认采购计划，避免影响第 4 周排产。",tag:"物料 M-103 · 中优先级"},
+  {level:"warn",icon:"⚡",title:"第 3 周产能利用率偏高",desc:"需求集中在第 3 周，建议考虑提前排产或进行产能平衡。",tag:"产能 · 需关注"}
+ ]
+};
+let state = structuredClone(initial), planHasRun=false, mrpHasRun=false, nextOrder=48, nextPo=1;
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n||0).toLocaleString("zh-CN");
+const money=n=>"€"+Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:0,maximumFractionDigits:0});
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const statusClass=s=>s==="已确认"||s==="已生成"||s==="已下单"?"good":s==="计划中"||s==="待采购"?"watch":s==="高风险"?"bad":"info";
+function pill(s){return `<span class="status ${statusClass(s)}">${esc(s)}</span>`}
+function table(headers,rows){return `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.length?rows.join(""):`<tr><td colspan="${headers.length}" class="empty">暂无数据</td></tr>`}</tbody></table>`}
+function row(cells){return `<tr>${cells.map(x=>`<td>${x}</td>`).join("")}</tr>`}
+function kpi(label,value,foot,icon,cls=""){return `<div class="card kpi"><div class="kpi-head"><span>${label}</span><span class="kpi-icon">${icon}</span></div><div class="kpi-value ${cls}">${value}</div><div class="kpi-foot">${foot}</div></div>`}
+function weekDemand(){return Array.from({length:6},(_,i)=>state.orders.filter(o=>o.week===i+1).reduce((s,o)=>s+o.qty,0))}
+function renderChart(){const demand=weekDemand(),max=Math.max(state.capacity,...demand)*1.15; $("mainChart").innerHTML=demand.map((v,i)=>`<div class="chart-col"><div class="bars"><div class="bar blue" title="需求 ${fmt(v)}" style="height:${Math.max(3,v/max*100)}%"></div><div class="bar cyan" title="产能 ${fmt(state.capacity)}" style="height:${state.capacity/max*100}%"></div></div><div class="chart-label">第 ${i+1} 周</div></div>`).join("")}
+function renderKpis(){const total=state.orders.reduce((s,o)=>s+o.qty,0),high=state.risks.filter(r=>r.level==="bad").length; $("kpis").innerHTML=[kpi("未交付需求量",fmt(total),"来自当前模拟订单","▤",""),kpi("周标准产能",fmt(state.capacity),"可在生产计划中调整","⚙",""),kpi("物料种类",state.materials.length,"纳入 MRP 计算","⌘",""),kpi("待关注风险",state.risks.length,`${high} 项高优先级`,"△",high?"warn":"")].join("");}
+function renderService(){ $("serviceLevels").innerHTML=state.products.map(p=>`<div class="progress-row"><span>${esc(p.name)}</span><div class="track"><div class="fill ${p.rate<90?"yellow":""}" style="width:${p.rate}%"></div></div><b>${p.rate}%</b></div>`).join("")}
+function orderRows(list,withActions=false){return list.map(o=>row([`<b>${esc(o.id)}</b>`,`<span>${esc(o.customer)}</span>`,`<span>${esc(o.product)}</span>`,`第 ${o.week} 周`,fmt(o.qty),pill(o.status),o.priority,withActions?`<button class="small" data-delete-order="${esc(o.id)}">删除</button>`:""]))}
+function renderRecent(){ $("recentOrders").innerHTML=table(["订单号","客户","产品","周次","数量","状态"],orderRows(state.orders.slice(0,4)))}
+function riskCard(r){return `<div class="risk ${r.level==="bad"?"red":""}"><div class="risk-icon">${r.icon}</div><div><strong>${esc(r.title)}</strong><p>${esc(r.desc)}</p><small>${esc(r.tag)}</small></div></div>`}
+function renderTopRisks(){ $("topRisks").innerHTML=state.risks.slice(0,2).map(riskCard).join("")}
+function renderOrders(){const q=$("orderSearch").value.toLowerCase(),f=$("orderFilter").value;const list=state.orders.filter(o=>(f==="all"||o.status===f)&&[o.id,o.customer,o.product,o.code].join(" ").toLowerCase().includes(q));$("ordersTable").innerHTML=table(["订单号","客户","产品","交付周","数量","状态","优先级","操作"],orderRows(list,true));}
+function renderProduction(){const d=weekDemand(),rows=state.products.map(p=>{const weekly=Array.from({length:6},(_,i)=>state.orders.filter(o=>o.week===i+1&&o.code===p.code).reduce((s,o)=>s+o.qty,0));return {p,weekly,total:weekly.reduce((a,b)=>a+b,0)}});$("productionKpis").innerHTML=[kpi("计划需求",fmt(d.reduce((a,b)=>a+b,0)),"6 周累计","▤"),kpi("产能约束",fmt(state.capacity),"每周标准产能","⚙"),kpi("超产周数",d.filter(v=>v>state.capacity).length,"基于周需求与产能对比","△",d.some(v=>v>state.capacity)?"warn":""),kpi("计划状态",planHasRun?"已模拟运行":"待运行",planHasRun?"演示结果已更新":"点击右上角运行计划","✓")].join("");$("productionTable").innerHTML=table(["产品","W1","W2","W3","W4","W5","W6","累计需求","示例成本"],rows.map(({p,weekly,total})=>row([`<b>${esc(p.name)}</b>`,...weekly.map(fmt),`<b>${fmt(total)}</b>`,money(total*p.cost)])));if(planHasRun)toast("模拟计划已更新；结果仅用于前端演示。")}
+function computeMrp(){const totals={};state.products.forEach(p=>{const qty=state.orders.filter(o=>o.code===p.code).reduce((s,o)=>s+o.qty,0);Object.entries(state.bom[p.code]||{}).forEach(([m,n])=>totals[m]=(totals[m]||0)+qty*n)});return state.materials.map(m=>{const gross=totals[m.code]||0,net=Math.max(0,gross+m.safety-m.onHand);return {...m,gross,net,after:m.onHand-gross}})}
+function renderMrp(){const list=computeMrp(),netCount=list.filter(m=>m.net>0).length;$("mrpKpis").innerHTML=[kpi("物料需求种类",list.length,"已配置 BOM 的物料","⌘"),kpi("需补货物料",netCount,"净需求大于 0","△",netCount?"warn":""),kpi("模拟净需求总量",fmt(list.reduce((s,m)=>s+m.net,0)),"已考虑安全库存","▧")].join("");$("mrpTable").innerHTML=table(["物料编码","物料名称","毛需求","现有库存","安全库存","模拟净需求","采购提前期","状态"],list.map(m=>row([m.code,esc(m.name),fmt(m.gross),fmt(m.onHand),fmt(m.safety),`<b>${fmt(m.net)}</b>`,`${m.lead} 周`,pill(m.net>0?"待采购":"库存可覆盖")])));}
+function renderInventory(){const q=$("stockSearch").value.toLowerCase();$("inventoryTable").innerHTML=table(["编码","物料名称","现有库存","安全库存","采购提前期","供应商","操作"],state.materials.filter(m=>(m.code+m.name+m.supplier).toLowerCase().includes(q)).map(m=>row([m.code,esc(m.name),fmt(m.onHand),fmt(m.safety),`${m.lead} 周`,esc(m.supplier),`<button class="small" data-stock="${m.code}">调整</button>`])));}
+function renderPo(){const list=state.purchaseOrders;$("poKpis").innerHTML=[kpi("采购建议单",list.length,"当前演示记录","⇄"),kpi("待采购金额",money(list.filter(p=>p.status==="待采购").reduce((s,p)=>s+p.qty*p.cost,0)),"按示例物料成本估算","€"),kpi("待确认项",list.filter(p=>p.status==="待采购").length,"可切换状态","◷")].join("");$("poTable").innerHTML=table(["建议单号","物料","建议数量","估算金额","提前期","状态","操作"],list.map(p=>row([p.id,`${p.code} · ${esc(p.name)}`,fmt(p.qty),money(p.qty*p.cost),`${p.lead} 周`,pill(p.status),`<button class="small" data-po="${p.id}">${p.status==="待采购"?"标记已下单":"重置状态"}</button>`])));}
+function renderRisks(){const risks=state.risks;$("riskKpis").innerHTML=[kpi("风险总数",risks.length,"规则示例","△"),kpi("高优先级",risks.filter(r=>r.level==="bad").length,"建议优先处理","!","warn"),kpi("交期相关",risks.filter(r=>r.tag.includes("M-103")||r.tag.includes("M-101")).length,"物料供给风险","◷")].join("");$("riskList").innerHTML=risks.map(riskCard).join("")||'<div class="empty">当前没有模拟风险项。</div>'}
+function renderAll(){renderKpis();renderChart();renderService();renderRecent();renderTopRisks();renderOrders();renderProduction();renderMrp();renderInventory();renderPo();renderRisks()}
+const viewMeta={dashboard:["总览仪表盘","把需求、产能、物料与采购放进同一个计划闭环。"],orders:["需求与订单","管理客户需求、交付周与订单优先级。"],production:["生产计划 MPS","查看未来六周的产品需求，并模拟运行主生产计划。"],mrp:["物料需求 MRP","通过示例 BOM、库存和安全库存演示净需求计算。"],inventory:["库存管理","调整物料库存，观察模拟物料需求变化。"],procurement:["采购建议","将模拟净需求转化为可跟踪的采购建议。"],risks:["风险预警","关注交期、库存与产能方面的示例风险。"]};
+function goView(name){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));$("view-"+name).classList.add("active");document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));$("pageTitle").textContent=viewMeta[name][0];$("pageSubtitle").textContent=viewMeta[name][1];}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>goView(b.dataset.view)));document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>goView(b.dataset.goto)));
+$("orderSearch").addEventListener("input",renderOrders);$("orderFilter").addEventListener("change",renderOrders);$("stockSearch").addEventListener("input",renderInventory);
+function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove("show"),2600)}
+function openModal(title,fields,onSubmit){$("modalTitle").textContent=title;$("modalFields").innerHTML=fields.map(f=>`<div class="form-field"><label for="f-${f.name}">${f.label}</label>${f.options?`<select class="field" id="f-${f.name}" name="${f.name}">${f.options.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("")}</select>`:`<input class="field" id="f-${f.name}" name="${f.name}" type="${f.type||"text"}" ${f.min!==undefined?`min="${f.min}"`:""} ${f.required===false?"":"required"} value="${esc(f.value??"")}">`}</div>`).join("");$("modalBackdrop").classList.add("show");$("demoForm").onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.target).entries());onSubmit(data);$("modalBackdrop").classList.remove("show");e.target.reset();renderAll()}}
+function closeModal(){$("modalBackdrop").classList.remove("show")}
+$("closeModal").onclick=$("cancelModal").onclick=closeModal;$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal()});
+$("addOrderBtn").onclick=()=>openModal("新增模拟订单",[{name:"customer",label:"客户名称"},{name:"product",label:"产品",options:state.products.map(p=>({value:p.code,label:p.name}))},{name:"week",label:"交付周（1–6）",type:"number",min:1,value:2},{name:"qty",label:"需求数量",type:"number",min:1,value:500},{name:"priority",label:"优先级",options:["高","中","低"].map(x=>({value:x,label:x}))}],d=>{const p=state.products.find(p=>p.code===d.product);state.orders.push({id:"SO-26"+String(nextOrder++),customer:d.customer,product:p.name,code:p.code,week:Math.max(1,Math.min(6,+d.week)),qty:Math.max(1,+d.qty),status:"待排产",priority:d.priority});toast("订单已加入本地模拟数据")});
+$("capacityBtn").onclick=()=>openModal("调整模拟周产能",[{name:"capacity",label:"每周标准产能",type:"number",min:1,value:state.capacity}],d=>{state.capacity=Math.max(1,+d.capacity);toast("模拟产能已更新")});
+$("addStockBtn").onclick=()=>openModal("调整模拟库存",[{name:"code",label:"物料",options:state.materials.map(m=>({value:m.code,label:m.code+" · "+m.name}))},{name:"onHand",label:"现有库存数量",type:"number",min:0,value:300}],d=>{const m=state.materials.find(m=>m.code===d.code);m.onHand=Math.max(0,+d.onHand);toast("库存已在本地演示中更新")});
+document.addEventListener("click",e=>{const del=e.target.closest("[data-delete-order]");if(del){state.orders=state.orders.filter(o=>o.id!==del.dataset.deleteOrder);renderAll();toast("已删除本地演示订单")}const st=e.target.closest("[data-stock]");if(st){const m=state.materials.find(m=>m.code===st.dataset.stock);openModal("调整模拟库存",[ {name:"code",label:"物料",options:[{value:m.code,label:m.code+" · "+m.name}]},{name:"onHand",label:"现有库存数量",type:"number",min:0,value:m.onHand}],d=>{m.onHand=Math.max(0,+d.onHand);toast("库存已更新")})}const po=e.target.closest("[data-po]");if(po){const p=state.purchaseOrders.find(p=>p.id===po.dataset.po);p.status=p.status==="待采购"?"已下单":"待采购";renderPo();toast("采购建议状态已更新")}});
+$("runPlanBtn").onclick=()=>{planHasRun=true;const d=weekDemand();state.risks=state.risks.filter(r=>!r.tag.includes("产能"));if(d.some(v=>v>state.capacity))state.risks.unshift({level:"bad",icon:"⚡",title:"模拟排产发现产能超载",desc:`需求峰值为 ${fmt(Math.max(...d))} 件，周产能为 ${fmt(state.capacity)} 件。建议调整交付周或提高可用产能。`,tag:"产能 · 模拟计算"});else state.risks.push({level:"warn",icon:"✓",title:"模拟排产已运行",desc:"当前示例需求均未超过设定的周产能。仍需检查物料交期与库存约束。",tag:"计划 · 模拟计算"});renderAll();toast("已运行前端模拟计划")}
+$("runMrpBtn").onclick=()=>{mrpHasRun=true;renderMrp();toast("已重新计算示例物料净需求")}
+$("generatePoBtn").onclick=()=>{const items=computeMrp().filter(m=>m.net>0);if(!items.length){toast("当前模拟数据没有待补货物料");return}items.forEach(m=>{if(!state.purchaseOrders.some(p=>p.code===m.code&&p.status==="待采购"))state.purchaseOrders.push({id:"PO-DEMO-"+String(nextPo++).padStart(3,"0"),code:m.code,name:m.name,qty:m.net,cost:m.cost,lead:m.lead,status:"待采购"})});renderPo();toast(`已生成 ${items.length} 类模拟采购建议`)};
+$("refreshRiskBtn").onclick=()=>{state.risks=initial.risks.map(r=>({...r}));renderRisks();toast("已恢复默认示例风险")};
+$("resetBtn").onclick=()=>{state=structuredClone(initial);planHasRun=false;mrpHasRun=false;nextOrder=48;nextPo=1;renderAll();goView("dashboard");toast("演示数据已重置")};
+renderAll();
+</script>
+</body>
+</html>
